@@ -1,0 +1,32 @@
+{
+  "name": "@adobe/griffon-plugin-tools",
+  "version": "0.0.1",
+  "description": "Tools for packaging and uploading Project Griffon plugins",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "babel tools/packager.js -d dist && babel tools/uploader.js -d dist",
+    "lint": "eslint \"**/*.js\""
+  },
+  "bin": {
+    "griffon-packager": "./dist/packager.js",
+    "griffon-uploader": "./dist/uploader.js"
+  },
+  "author": "Adobe Systems",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.17.2"
+  },
+  "dependencies": {
+    "archiver": "^4.0.1",
+    "form-data": "^3.0.0",
+    "node-fetch": "^2.6.0",
+    "semver": "^7.3.2",
+    "yauzl": "^2.10.0"
+  }
+}
