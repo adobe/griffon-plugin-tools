@@ -1,18 +1,19 @@
 {
   "name": "@adobe/griffon-plugin-tools",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Tools for packaging and uploading Project Griffon plugins",
-  "files": [
-    "dist/"
-  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/griffon-plugin-tools.git"
+  },
   "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "babel tools/packager.js -d dist && babel tools/uploader.js -d dist",
+    "prepublish": "npm run lint",
+    "preversion": "npm run lint",
     "lint": "eslint \"**/*.js\""
   },
   "bin": {
-    "griffon-packager": "./dist/packager.js",
-    "griffon-uploader": "./dist/uploader.js"
+    "griffon-packager": "./bin/packager.js",
+    "griffon-uploader": "./bin/uploader.js"
   },
   "author": "Adobe Systems",
   "license": "Apache-2.0",

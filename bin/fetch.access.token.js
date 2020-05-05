@@ -48,5 +48,11 @@ module.exports = async ({
     body: tokenParams
   });
 
-  return tokenResponse.json();
+  const json = await tokenResponse.json();
+
+  if (json.error) {
+    throw new Error(`There was a problem requesting an access token: ${json.error_description}`);
+  }
+
+  return json;
 };
