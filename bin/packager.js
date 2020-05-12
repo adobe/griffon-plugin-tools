@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 
 const archiver = require('archiver');
 const fs = require('fs');
+const path = require('path');
 const semver = require('semver');
 
 const { DESCRIPTOR_NAME } = require('./constants');
@@ -26,7 +27,7 @@ const { DESCRIPTOR_NAME } = require('./constants');
     throw new Error('Couldn\'t read plugin.json descriptor file');
   }
 
-  const { displayName, namespace, src, version } = descriptor;
+  const { displayName, icon, namespace, src, version } = descriptor;
 
   if (!displayName) {
     throw new Error('You need to provide a displayName in plugin.json');
@@ -51,7 +52,18 @@ const { DESCRIPTOR_NAME } = require('./constants');
 
   zipArchive.pipe(output);
 
-  zipArchive.glob('*.js');
+  const srcPath = path.dirname(src);
+
+  if (srcPath === '.') {
+    zipArchive.file(src);
+  } else {
+    zipArchive.glob(`${srcPath}/*`);
+  }
+
+  if (icon) {
+    zipArchive.file(icon);
+  }
+
   zipArchive.file('plugin.json');
 
   zipArchive.finalize();
