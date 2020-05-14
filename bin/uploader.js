@@ -14,15 +14,16 @@ governing permissions and limitations under the License.
 const FormData = require('form-data');
 const fs = require('fs');
 const fetch = require('node-fetch');
+const path = require('path');
 const semver = require('semver');
 
-const { CLIENT_SECRET, IMS_USERNAME, IMS_PASSWORD, IMS_ORG } = process.env;
+const { CLIENT_SECRET, ENV_NAME, IMS_USERNAME, IMS_PASSWORD, IMS_ORG } = process.env;
 
-const { GRAFFIAS_SERVER } = require('./constants');
+const args = process.argv.slice(2);
+
+const { ENVIRONMENTS } = require('./constants');
 const fetchAccessToken = require('./fetch.access.token');
 const readPluginJsonFromPackage = require('./read.plugin.json.from.package');
-
-const PACKAGE_NAME_REGEX = /^plugin-.*\.zip$/;
 
 const CREATE_QUERY = `
   mutation test($file: Upload!) {
@@ -47,19 +48,29 @@ const UPDATE_QUERY = `
     throw new Error('You need to set IMS_ORG in your environment');
   }
 
-  const zipFiles = fs.readdirSync(process.cwd());
-  const zipPath = zipFiles.filter(file => PACKAGE_NAME_REGEX.test(file))[0];
-
-  if (!zipPath) {
-    throw new Error('Couldn\'t find a zip package to upload');
-  }
+  const env = ENV_NAME || 'prod';
+  const { GRAFFIAS_SERVER, IMS_HOST } = ENVIRONMENTS[env];
 
   try {
+    const zipFile = args[0];
+    if (!zipFile) {
+      throw new Error('You must provide the zip plugin package as an argument.');
+    }
+    const zipPath = path.resolve(zipFile);
+    if (!/.*\.zip$/.test(zipFile) || !fs.existsSync(zipPath)) {
+      throw new Error(`No zip file found at ${zipPath}`);
+    }
+
     const descriptor = await readPluginJsonFromPackage(zipPath);
 
     const { namespace, version } = descriptor;
 
-    const tokenResponseJson = await fetchAccessToken({ CLIENT_SECRET, IMS_USERNAME, IMS_PASSWORD });
+    const tokenResponseJson = await fetchAccessToken({
+      CLIENT_SECRET,
+      IMS_PASSWORD,
+      IMS_HOST,
+      IMS_USERNAME
+    });
 
     const queryPluginsResponse = await fetch(GRAFFIAS_SERVER, {
       method: 'POST',
@@ -85,8 +96,12 @@ const UPDATE_QUERY = `
     });
 
     const plugins = await queryPluginsResponse.json();
-    const foundPlugin = plugins.data && plugins.data.plugins && plugins.data.plugins.length
-      ? plugins.data.plugins[0] : null;
+
+    if (!plugins || !plugins.data || !plugins.data.plugins) {
+      throw new Error('There was a problem fetching plugins from the server.');
+    }
+
+    const foundPlugin = plugins.data.plugins.find(plugin => plugin.namespace === namespace);
 
     if (foundPlugin) {
       if (semver.lte(version, foundPlugin.version)) {

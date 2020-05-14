@@ -12,12 +12,11 @@ governing permissions and limitations under the License.
 const fetch = require('node-fetch');
 const { URLSearchParams } = require('url');
 
-const { IMS_HOST } = require('./constants');
-
 module.exports = async ({
   CLIENT_SECRET,
-  IMS_USERNAME,
-  IMS_PASSWORD
+  IMS_HOST,
+  IMS_PASSWORD,
+  IMS_USERNAME
 }) => {
   if (!IMS_USERNAME) {
     throw new Error('You need to set IMS_USERNAME in your environment');
