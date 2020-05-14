@@ -8,10 +8,10 @@ Run the packager by executing the following command from the command line within
 npx @adobe/griffon-packager
 ```
 
-Run the uploader by executing the following command in the directory that contains the zipped plugin package:
+Run the uploader by executing the following command and passing in the package zip created above as an argument:
 
 ```
-npx @adobe/griffon-uploader
+npx @adobe/griffon-uploader plugin-XXXXX.zip
 ```
 
 ### Configuration
@@ -24,6 +24,10 @@ IMS Password `export IMS_PASSWORD=XXXXX`
 Client Secret `export CLIENT_SECRET=XXXXX`
 
 IMS Organization ID `export IMS_ORG=XXXXX`
+
+_for Adobe internal use only_
+
+ENV_NAME `export ENV_NAME=prod`
 
 ## Contributing
 
