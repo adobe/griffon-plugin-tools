@@ -1,6 +1,6 @@
 {
   "name": "@adobe/griffon-plugin-tools",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Tools for packaging and uploading Project Griffon plugins",
   "repository": {
     "type": "git",
