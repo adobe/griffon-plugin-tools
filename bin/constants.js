@@ -11,6 +11,25 @@ governing permissions and limitations under the License.
 
 module.exports = {
   DESCRIPTOR_NAME: 'plugin.json',
-  GRAFFIAS_SERVER: 'https://graffias.adobe.io/graffias/graphql',
-  IMS_HOST: 'https://ims-na1.adobelogin.com'
+  ENVIRONMENTS: {
+    // for Adobe internal use only
+    dev: {
+      GRAFFIAS_SERVER: 'https://graffias-dev.adobe.io/graffias/graphql',
+      IMS_HOST: 'https://ims-na1-stg1.adobelogin.com'
+    },
+    // for Adobe internal use only
+    qa: {
+      GRAFFIAS_SERVER: 'https://graffias-qa.adobe.io/graffias/graphql',
+      IMS_HOST: 'https://ims-na1-stg1.adobelogin.com'
+    },
+    // for Adobe internal use only
+    stage: {
+      GRAFFIAS_SERVER: 'https://graffias-preprod.adobe.io/graffias/graphql',
+      IMS_HOST: 'https://ims-na1.adobelogin.com'
+    },
+    prod: {
+      GRAFFIAS_SERVER: 'https://graffias.adobe.io/graffias/graphql',
+      IMS_HOST: 'https://ims-na1.adobelogin.com'
+    }
+  }
 };
