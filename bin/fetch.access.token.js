@@ -9,6 +9,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/* eslint-disable no-console */
+
 const fetch = require('node-fetch');
 const { URLSearchParams } = require('url');
 
@@ -16,10 +18,11 @@ module.exports = async ({
   CLIENT_SECRET,
   IMS_HOST,
   IMS_PASSWORD,
-  IMS_USERNAME
+  IMS_USER_EMAIL,
+  IMS_USER_ID
 }) => {
-  if (!IMS_USERNAME) {
-    throw new Error('You need to set IMS_USERNAME in your environment');
+  if (!IMS_USER_EMAIL) {
+    throw new Error('You need to set IMS_USER_EMAIL in your environment');
   }
 
   if (!IMS_PASSWORD) {
@@ -34,15 +37,16 @@ module.exports = async ({
   tokenParams.append('client_id', 'NovaTestToken');
   tokenParams.append('client_secret', CLIENT_SECRET);
   tokenParams.append('grant_type', 'password');
-  tokenParams.append('username', IMS_USERNAME);
+  tokenParams.append('username', IMS_USER_EMAIL);
   tokenParams.append('password', IMS_PASSWORD);
   tokenParams.append('scope', 'openid,AdobeID,session,read_organizations,additional_info.projectedProductContext,additional_info.job_function,additional_info.user_image_url');
 
+  console.log('Getting Type 1 Access Token');
   const tokenResponse = await fetch(`${IMS_HOST}/ims/token/v1`, {
     method: 'POST',
     headers: {
       'Cache-Control': 'no-cache',
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
     },
     body: tokenParams
   });
@@ -53,5 +57,37 @@ module.exports = async ({
     throw new Error(`There was a problem requesting an access token: ${json.error_description}`);
   }
 
-  return json;
+  let accessToken = json.access_token;
+  let userId = IMS_USER_EMAIL;
+
+  if (IMS_USER_ID) {
+    const token2Params = new URLSearchParams();
+    token2Params.append('client_id', 'NovaTestToken');
+    token2Params.append('client_secret', CLIENT_SECRET);
+    token2Params.append('grant_type', 'cluster_at_exchange');
+    token2Params.append('user_id', IMS_USER_ID);
+    token2Params.append('user_token', accessToken);
+    token2Params.append('scope', 'openid,AdobeID,create_session,read_organizations,additional_info.projectedProductContext,additional_info.job_function,additional_info.user_image_url');
+
+    console.log('Exchanging Type 1 User token for T2E');
+    const token2Response = await fetch(`${IMS_HOST}/ims/token/v2`, {
+      method: 'POST',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: token2Params
+    });
+
+    const json2 = await token2Response.json();
+
+    if (json2.error) {
+      throw new Error(`There was a problem requesting an access token: ${json2.error_description}`);
+    }
+
+    accessToken = json2.access_token;
+    userId = IMS_USER_ID;
+  }
+
+  return { access_token: accessToken, userId };
 };
