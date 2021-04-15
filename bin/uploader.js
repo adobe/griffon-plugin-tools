@@ -17,7 +17,7 @@ const fetch = require('node-fetch');
 const path = require('path');
 const semver = require('semver');
 
-const { CLIENT_SECRET, ENV_NAME, IMS_USERNAME, IMS_PASSWORD, IMS_ORG } = process.env;
+const { CLIENT_SECRET, ENV_NAME, IMS_USER_EMAIL, IMS_USER_ID, IMS_PASSWORD, IMS_ORG } = process.env;
 
 const args = process.argv.slice(2);
 
@@ -68,7 +68,8 @@ const UPDATE_QUERY = `
     CLIENT_SECRET,
     IMS_PASSWORD,
     IMS_HOST,
-    IMS_USERNAME
+    IMS_USER_EMAIL,
+    IMS_USER_ID
   });
 
   const queryPluginsResponse = await fetch(GRAFFIAS_SERVER, {
@@ -78,8 +79,8 @@ const UPDATE_QUERY = `
       'x-gw-ims-user-id': tokenResponseJson.userId,
       'x-api-key': 'NovaTestToken',
       Authorization: `Bearer ${tokenResponseJson.access_token}`,
-      Accept: 'application/json; version=1',
-      'Content-Type': 'application/json'
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
     },
     body: JSON.stringify({
       query: `

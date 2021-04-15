@@ -17,7 +17,10 @@ npx @adobe/griffon-uploader plugin-XXXXX.zip
 ### Configuration
 In order to upload, you need to have an IMS account and set the following environment variables:
 
-IMS Username `export IMS_USERNAME=XXXXX`
+IMS User Email `export IMS_USER_EMAIL=XXXXX`
+
+IMS User ID `export IMS_USER_ID=XXXXX`
+_for Type2E accounts_
 
 IMS Password `export IMS_PASSWORD=XXXXX`
 
