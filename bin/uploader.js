@@ -141,4 +141,7 @@ const UPDATE_QUERY = `
   } else {
     throw new Error(`There was a problem uploading the plugin: ${JSON.stringify(uploadedPlugin)}`);
   }
-})();
+})().catch((error) => {
+  console.log(error);
+  process.exit(1);
+});
