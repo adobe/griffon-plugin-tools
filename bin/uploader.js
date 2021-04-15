@@ -26,7 +26,7 @@ const fetchAccessToken = require('./fetch.access.token');
 const readPluginJsonFromPackage = require('./read.plugin.json.from.package');
 
 const CREATE_QUERY = `
-  mutation test($file: Upload!) {
+  mutation createPlugin($file: Upload!) {
     createPlugin(file: $file) {
       uuid
     }
@@ -34,7 +34,7 @@ const CREATE_QUERY = `
 `;
 
 const UPDATE_QUERY = `
-  mutation test($uuid: UUID!, $file: Upload!) {
+  mutation updatePlugin($uuid: UUID!, $file: Upload!) {
     updatePlugin(uuid: $uuid, file: $file) {
       uuid
     }
@@ -83,7 +83,7 @@ const UPDATE_QUERY = `
     },
     body: JSON.stringify({
       query: `
-        query name($namespace: String){
+        query queryPlugins($namespace: String){
           plugins (namespace:$namespace){
             uuid
             namespace
