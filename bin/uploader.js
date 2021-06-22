@@ -105,7 +105,7 @@ const UPDATE_QUERY = `
 
   if (foundPlugin) {
     if (semver.lt(version, foundPlugin.version)) {
-      throw new Error(`Plugin version: ${foundPlugin.version} cannot be lower than version: ${version} on the server`);
+      throw new Error(`Plugin version: ${version} cannot be lower than version: ${foundPlugin.version} on the server`);
     }
     console.log(`Found an existing plugin with the namesapce: ${namespace}. The plugin will be updated.`);
   }
