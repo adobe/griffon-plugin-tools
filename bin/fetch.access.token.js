@@ -13,14 +13,11 @@ governing permissions and limitations under the License.
 
 const fetch = require('node-fetch');
 const { URLSearchParams } = require('url');
+const { ENVIRONMENTS } = require('./constants');
 
-module.exports = async ({
-  CLIENT_SECRET,
-  IMS_HOST,
-  IMS_PASSWORD,
-  IMS_USER_EMAIL,
-  IMS_USER_ID
-}) => {
+const { CLIENT_SECRET, IMS_USER_EMAIL, IMS_USER_ID, IMS_PASSWORD } = process.env;
+
+module.exports = async (env = 'prod') => {
   if (!IMS_USER_EMAIL) {
     throw new Error('You need to set IMS_USER_EMAIL in your environment');
   }
@@ -32,6 +29,8 @@ module.exports = async ({
   if (!CLIENT_SECRET) {
     throw new Error('You need to set CLIENT_SECRET in your environment');
   }
+
+  const { IMS_HOST } = ENVIRONMENTS[env];
 
   const tokenParams = new URLSearchParams();
   tokenParams.append('client_id', 'NovaTestToken');

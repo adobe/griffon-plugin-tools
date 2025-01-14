@@ -17,12 +17,13 @@ const fetch = require('node-fetch');
 const path = require('path');
 const semver = require('semver');
 
-const { CLIENT_SECRET, ENV_NAME, IMS_USER_EMAIL, IMS_USER_ID, IMS_PASSWORD, IMS_ORG } = process.env;
+const { ENV_NAME, IMS_ORG } = process.env;
 
 const args = process.argv.slice(2);
 
 const { ENVIRONMENTS } = require('./constants');
 const fetchAccessToken = require('./fetch.access.token');
+const fetchPlugin = require('./fetch.plugin');
 const readPluginJsonFromPackage = require('./read.plugin.json.from.package');
 
 const CREATE_QUERY = `
@@ -48,10 +49,11 @@ const UPDATE_QUERY = `
     throw new Error('You need to set IMS_ORG in your environment');
   }
 
-  const env = ENV_NAME || 'prod';
-  const { GRAFFIAS_SERVER, IMS_HOST } = ENVIRONMENTS[env];
+  const environmentIndex = args.find(arg => arg.startsWith('--environment='));
+  const env = environmentIndex ? environmentIndex.split('=')[1] : ENV_NAME || 'prod';
+  const { GRAFFIAS_SERVER } = ENVIRONMENTS[env];
 
-  const zipFile = args[0];
+  const zipFile = args[args.length - 1];
   if (!zipFile) {
     throw new Error('You must provide the zip plugin package as an argument.');
   }
@@ -64,44 +66,9 @@ const UPDATE_QUERY = `
 
   const { namespace, version } = descriptor;
 
-  const tokenResponseJson = await fetchAccessToken({
-    CLIENT_SECRET,
-    IMS_PASSWORD,
-    IMS_HOST,
-    IMS_USER_EMAIL,
-    IMS_USER_ID
-  });
+  const tokenResponseJson = await fetchAccessToken(env);
 
-  const queryPluginsResponse = await fetch(GRAFFIAS_SERVER, {
-    method: 'POST',
-    headers: {
-      'x-gw-ims-org-id': IMS_ORG,
-      'x-gw-ims-user-id': tokenResponseJson.userId,
-      'x-api-key': 'NovaTestToken',
-      Authorization: `Bearer ${tokenResponseJson.access_token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    },
-    body: JSON.stringify({
-      query: `
-        query queryPlugins($namespace: String){
-          plugins (namespace:$namespace){
-            uuid
-            namespace
-            version
-          }
-        }`,
-      variables: { namespace }
-    })
-  });
-
-  const plugins = await queryPluginsResponse.json();
-
-  if (!plugins || !plugins.data || !plugins.data.plugins) {
-    throw new Error('There was a problem fetching plugins from the server.');
-  }
-
-  const foundPlugin = plugins.data.plugins.find(plugin => plugin.namespace === namespace);
+  const foundPlugin = await fetchPlugin(namespace, env);
 
   if (foundPlugin) {
     if (semver.lt(version, foundPlugin.version)) {
@@ -134,8 +101,7 @@ const UPDATE_QUERY = `
   });
 
   const uploadedPlugin = await uploadPluginResponse.json();
-  const uuid = uploadedPlugin.data && uploadedPlugin.data[field]
-    ? uploadedPlugin.data[field].uuid : null;
+  const uuid = uploadedPlugin.data?.[field]?.uuid || null;
 
   if (uuid) {
     console.log(`Uploaded plugin uuid: ${uuid}`);
