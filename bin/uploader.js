@@ -51,7 +51,6 @@ const UPDATE_QUERY = `
 
   const environmentIndex = args.find(arg => arg.startsWith('--environment='));
   const env = environmentIndex ? environmentIndex.split('=')[1] : ENV_NAME || 'prod';
-  console.log('env', env);
   const { GRAFFIAS_SERVER } = ENVIRONMENTS[env];
 
   const zipFile = args[args.length - 1];
@@ -70,7 +69,6 @@ const UPDATE_QUERY = `
   const tokenResponseJson = await fetchAccessToken(env);
 
   const foundPlugin = await fetchPlugin(namespace, env);
-  console.log(foundPlugin);
 
   if (foundPlugin) {
     if (semver.lt(version, foundPlugin.version)) {
