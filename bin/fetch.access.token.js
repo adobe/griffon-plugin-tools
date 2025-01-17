@@ -17,7 +17,13 @@ const { ENVIRONMENTS } = require('./constants');
 
 const { CLIENT_SECRET, IMS_USER_EMAIL, IMS_USER_ID, IMS_PASSWORD } = process.env;
 
+let accessTokenData = null;
+
 module.exports = async (env = 'prod') => {
+  if (accessTokenData) {
+    return accessTokenData;
+  }
+
   if (!IMS_USER_EMAIL) {
     throw new Error('You need to set IMS_USER_EMAIL in your environment');
   }
@@ -88,5 +94,7 @@ module.exports = async (env = 'prod') => {
     userId = IMS_USER_ID;
   }
 
-  return { access_token: accessToken, userId };
+  accessTokenData = { access_token: accessToken, userId };
+
+  return accessTokenData;
 };
