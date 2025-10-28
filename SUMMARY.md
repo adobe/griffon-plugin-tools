@@ -138,3 +138,18 @@ griffon-plugin-tools (intermediary)
 **Plugins Deleted:** 3 (across 3 environments)  
 **Success Rate:** 100%
 
+---
+
+## Reference Branch
+
+**Branch Name:** `reference/plugin-delete-DO-NOT-MERGE`  
+**Purpose:** Reference implementation for plugin deletion functionality  
+**Status:** ✅ Pushed to remote  
+**⚠️ DO NOT MERGE THIS BRANCH** - It's for reference and learning only
+
+**To view this branch:**
+```bash
+git fetch origin
+git checkout reference/plugin-delete-DO-NOT-MERGE
+```
+
