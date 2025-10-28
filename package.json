@@ -13,7 +13,9 @@
   },
   "bin": {
     "griffon-packager": "./bin/packager.js",
-    "griffon-uploader": "./bin/uploader.js"
+    "griffon-uploader": "./bin/uploader.js",
+    "griffon-delete": "./bin/delete.plugin.js",
+    "griffon-list": "./list-plugins.js"
   },
   "author": "Adobe Systems",
   "license": "Apache-2.0",
