@@ -119,17 +119,15 @@ griffon-plugin-tools (intermediary)
 - `setup-qa.sh` - QA environment setup script
 - `setup-stage.sh` - Stage environment setup script
 - `setup-prod.sh` - Production environment setup script
+- `GUIDE.md` - Detailed local testing guide with step-by-step instructions
+- `TEST.sh` - Automated test script for validating all functionality
 - `SESSION_LOG.md` - Complete session log with all commands/outputs
 - `SUMMARY.md` - This summary document
 
 ### Modified Files
 - `README.md` - Updated with new tools documentation
-- `.gitignore` - Updated to exclude local-only files
+- `.gitignore` - Cleaned up (no exclusions for reference branch)
 - `package.json` - Added new bin entries for delete/list tools
-
-### Local-Only Files (Not Committed)
-- `GUIDE.md` - Detailed local testing guide
-- `TEST.sh` - Automated test script
 
 ---
 
