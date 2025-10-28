@@ -6,6 +6,3 @@ node_modules
 .DS_Store
 TESTS.xml
 
-# Local testing files (not for repo)
-GUIDE.md
-TEST.sh
